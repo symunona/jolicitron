@@ -4,7 +4,10 @@
 import * as _ from "lodash"
 const assert = require("assert")
 
-interface Parser<T> {
+export interface ParserFactory<T> {
+  (...args): Parser<T>
+}
+export interface Parser<T> {
   (str: string): ParserResult<T>
 }
 
@@ -28,14 +31,16 @@ function parserify(parsers): Parsers {
   return _.mapValues(parsers, parser => (...args) => str => parser(str, ...args))
 }
 
-export function int(str): ParserResult<number> {
+// export const int = () => str => int2(str)
+
+export const int: ParserFactory<number> = () => str => {
   const parsedValue = parseInt(str)
   assert(_.isInteger(parsedValue), `expected int but found '${str}'`)
   const remaining = str.substring(str.indexOf(parsedValue.toString()) + parsedValue.toString().length)
   return {parsedValue, remaining}
 }
 
-function array<T>(str: string, length: number, itemParser: Parser<T>, {indices} = {indices: false}): ParserResult<T[]> {
+export const array: ParserFactory<T> = (length: number, itemParser: Parser<T>, {indices} = {indices: false}) => str => {
   assert(_.isInteger(length), `array(): expected parameter 'length' to be an integer but found ${length}`)
   const parsers = _.times(length, _.constant(itemParser))
   const {parsedValue, remaining} = tuple(str, parsers)

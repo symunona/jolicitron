@@ -2,7 +2,7 @@
 
 const _ = require("lodash")
 // const {int, array, object, merged} = require("./parsers")
-import {int, array, object, merged} from "./parsers"
+import {int, array, object, merged, Parser} from "./parsers"
 // const {hash, queue} = require("./memory")
 import {hash, queue} from "./memory"
 
@@ -47,6 +47,6 @@ function feed(parserFactory, feeder) {
     return (...args) => str => parserFactory(feeder(), ...args)(str)
 }
 
-function extract(parser, ...extractors) {
+function extract<T>(parser: Parser<T>, ...extractors: Array<(T) => any>) {
   return str => _.tap(parser(str), ({parsedValue}) => _.each(extractors, extractor => extractor(parsedValue)))
 }
