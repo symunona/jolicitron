@@ -1,8 +1,10 @@
 "use strict"
 
 const _ = require("lodash")
-const {int, array, object, merged} = require("./parsers")
-const {hash, queue} = require("./memory")
+// const {int, array, object, merged} = require("./parsers")
+import {int, array, object, merged} from "./parsers"
+// const {hash, queue} = require("./memory")
+import {hash, queue} from "./memory"
 
 module.exports = build
 

@@ -1,8 +1,6 @@
 "use strict"
 
-module.exports = {queue, hash}
-
-function queue() {
+export function queue() {
   const queue = []
   return {
     dequeue() {
@@ -13,7 +11,7 @@ function queue() {
   }
 }
 
-function hash() {
+export function hash() {
   const hash = {}
   return {
     get: key => () => {

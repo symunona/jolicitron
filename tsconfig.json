@@ -1,0 +1,15 @@
+{
+  "files": [
+    "jolicitron.ts",
+    "memory.ts",
+    "parsers.ts",
+    "typings/index.d.ts"
+  ],
+  "compilerOptions": {
+    "allowJs": false,
+    "listFiles": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "build"
+  }
+}

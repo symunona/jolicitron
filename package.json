@@ -31,7 +31,8 @@
     "eslint": "^2.5.2",
     "faucet": "^0.0.1",
     "istanbul": "^0.4.3",
-    "tape": "^4.4.0"
+    "tape": "^4.4.0",
+    "typescript": "^1.8.10"
   },
   "engines": {
     "node": ">=6.0.0"

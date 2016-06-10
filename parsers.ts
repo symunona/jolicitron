@@ -1,46 +1,65 @@
 "use strict"
 
-const _ = require("lodash")
+// const _ = require("lodash")
+import * as _ from "lodash"
 const assert = require("assert")
 
-module.exports = parserify({int, array, object, merged, tuple})
+interface Parser<T> {
+  (str: string): ParserResult<T>
+}
 
-function parserify(parsers) {
+interface ParserResult<T> {
+  parsedValue: T,
+  remaining: string,
+}
+
+interface Indexed {
+  index: number
+}
+
+interface Parsers {
+  int: Parser<number>
+}
+
+const p = parserify({int, array, object, merged, tuple})
+// export default int = 1
+
+function parserify(parsers): Parsers {
   return _.mapValues(parsers, parser => (...args) => str => parser(str, ...args))
 }
 
-function int(str) {
+export function int(str): ParserResult<number> {
   const parsedValue = parseInt(str)
   assert(_.isInteger(parsedValue), `expected int but found '${str}'`)
   const remaining = str.substring(str.indexOf(parsedValue.toString()) + parsedValue.toString().length)
   return {parsedValue, remaining}
 }
 
-function array(str, length, itemParser, {indices} = {indices: false}) {
+function array<T>(str: string, length: number, itemParser: Parser<T>, {indices} = {indices: false}): ParserResult<T[]> {
   assert(_.isInteger(length), `array(): expected parameter 'length' to be an integer but found ${length}`)
   const parsers = _.times(length, _.constant(itemParser))
   const {parsedValue, remaining} = tuple(str, parsers)
   return {parsedValue: indices ? indexed(parsedValue) : parsedValue, remaining}
 
-  function indexed(array) {
+  function indexed(array): Indexed[] {
     return _.map(array, (item, index) => {
-      return _.assign({index}, item)
+      return _.assign({index}, item) as Indexed
     })
   }
 }
 
-function object(str, keys, valueParser) {
+function object<T>(str: string, keys: string[], valueParser: Parser<T>): ParserResult<{}> {
   const {parsedValue: values, remaining} = array(str, keys.length, valueParser)
   const parsedValue = _.zipObject(keys, values)
   return {parsedValue, remaining}
 }
 
-function merged(str, parsers) {
+function merged(str: string, parsers: Parser<{}>[]): ParserResult<{}> {
   const {parsedValue, remaining} = tuple(str, parsers)
   return {parsedValue: _.reduce(parsedValue, _.merge, {}), remaining}
 }
 
-function tuple(str, parsers) {
+function tuple(str: string, parsers: Parser<any>[]): ParserResult<any[]> {
   return _.reduce(parsers, ({parsedValue: previousParsedValue, remaining: previousRemaining}, parser) => {
     const {parsedValue, remaining} = parser(previousRemaining)
     const nextParsedValue = previousParsedValue.concat([parsedValue])

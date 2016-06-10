@@ -3,5 +3,6 @@
    // replaced by eslint for ES6 support
   "javascript.validate.enable": false,
   "jshint.enable": false,
-  "jscs.disableIfNoConfig": true
+  "jscs.disableIfNoConfig": true,
+  "typescript.tsdk": "./node_modules/typescript/lib"
 }
