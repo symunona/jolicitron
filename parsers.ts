@@ -4,7 +4,7 @@
 // import * as _ from "lodash"
 // const assert = require("assert")
 
-import * as fp from "lodash/fp"
+import fp from "lodash/fp"
 import * as p from "./parser"
 
 // export interface ParserFactory2<T> {
@@ -75,7 +75,7 @@ function array<T>(length: number, itemParser: Parser<T>, {indices} = {indices: f
   // }
 }
 
-function object<T>(keys: string[], valueParser: p.Parser<T>): p.Parser<{key: T}> {
+function object<T>(keys: string[], valueParser: p.Parser<T>): p.Parser<{}> {
   return p.map(fp.zipObject(keys))(array(keys.length, valueParser))
   // const {parsedValue: values, remaining} = array(str, keys.length, valueParser)
   // const parsedValue = _.zipObject(keys, values)
@@ -89,7 +89,7 @@ function object<T>(keys: string[], valueParser: p.Parser<T>): p.Parser<{key: T}>
 // }
 
 export function merge(parsers: Parser<{}>[]): Parser<{}> {
-  return p.map(fp.reduce(fp.merge, {}))(chain(parsers))
+  return p.map(fp.reduce(fp.merge, {}))(p.chain(parsers))
 }
 
 /*function tuple(str: string, parsers: Parser<any>[]): ParserResult<any[]> {
